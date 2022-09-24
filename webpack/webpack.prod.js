@@ -16,10 +16,10 @@ module.exports = async () =>
     // devtool: 'source-map', // Enable source maps. Please note that this will slow down the build
     mode: ENV,
     entry: {
-      main: './src/main/webapp/app/index',
+      main: './src/app/index',
     },
     output: {
-      path: utils.root('target/classes/static/'),
+      path: utils.root('target/dist/'),
       filename: '[name].[contenthash:8].js',
       chunkFilename: '[name].[chunkhash:8].chunk.js',
     },

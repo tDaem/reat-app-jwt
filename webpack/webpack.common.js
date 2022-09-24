@@ -34,7 +34,7 @@ const getTsLoaderRule = env => {
 
 module.exports = async options => {
   const development = options.env === 'development';
-  const languagesHash = await hashElement(path.resolve(__dirname, '../src/main/webapp/i18n'), {
+  const languagesHash = await hashElement(path.resolve(__dirname, '../src/i18n'), {
     algo: 'md5',
     encoding: 'hex',
     files: { include: ['*.json'] },
@@ -71,7 +71,7 @@ module.exports = async options => {
           {
             test: /\.tsx?$/,
             use: getTsLoaderRule(options.env),
-            include: [utils.root('./src/main/webapp/app')],
+            include: [utils.root('./src/app')],
             exclude: [utils.root('node_modules')],
           },
           /*
@@ -121,16 +121,16 @@ module.exports = async options => {
               from: require.resolve('axios/dist/axios.min.js'),
               to: 'swagger-ui/',
             },
-            { from: './src/main/webapp/swagger-ui/', to: 'swagger-ui/' },
-            { from: './src/main/webapp/content/', to: 'content/' },
-            { from: './src/main/webapp/favicon.ico', to: 'favicon.ico' },
-            { from: './src/main/webapp/manifest.webapp', to: 'manifest.webapp' },
+            { from: './src/swagger-ui/', to: 'swagger-ui/' },
+            { from: './src/content/', to: 'content/' },
+            { from: './src/favicon.ico', to: 'favicon.ico' },
+            { from: './src/manifest.webapp', to: 'manifest.webapp' },
             // jhipster-needle-add-assets-to-webpack - JHipster will add/remove third-party resources in this array
-            { from: './src/main/webapp/robots.txt', to: 'robots.txt' },
+            { from: './src/robots.txt', to: 'robots.txt' },
           ],
         }),
         new HtmlWebpackPlugin({
-          template: './src/main/webapp/index.html',
+          template: './src/index.html',
           chunksSortMode: 'auto',
           inject: 'body',
           base: '/',
@@ -138,8 +138,8 @@ module.exports = async options => {
         new MergeJsonWebpackPlugin({
           output: {
             groupBy: [
-              { pattern: './src/main/webapp/i18n/zh-cn/*.json', fileName: './i18n/zh-cn.json' },
-              { pattern: './src/main/webapp/i18n/en/*.json', fileName: './i18n/en.json' },
+              { pattern: './src/i18n/zh-cn/*.json', fileName: './i18n/zh-cn.json' },
+              { pattern: './src/i18n/en/*.json', fileName: './i18n/en.json' },
               // jhipster-needle-i18n-language-webpack - JHipster will add/remove languages in this array
             ],
           },
