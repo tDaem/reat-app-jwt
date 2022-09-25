@@ -2,27 +2,33 @@ import 'react-toastify/dist/ReactToastify.css';
 import './app.scss';
 import 'app/config/dayjs.ts';
 
-import React, { useEffect } from 'react';
-import { Card } from 'reactstrap';
-import { BrowserRouter } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import React, {useEffect, useState} from 'react';
+import {Outlet} from 'react-router-dom';
 
-import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { getSession } from 'app/shared/reducers/authentication';
-import { getProfile } from 'app/shared/reducers/application-profile';
-import { setLocale } from 'app/shared/reducers/locale';
-import Header from 'app/shared/layout/header/header';
-import Footer from 'app/shared/layout/footer/footer';
-import { hasAnyAuthority } from 'app/shared/auth/private-route';
-import ErrorBoundary from 'app/shared/error/error-boundary';
-import { AUTHORITIES } from 'app/config/constants';
-import AppRoutes from 'app/routes';
+import {useAppDispatch, useAppSelector} from 'app/config/store';
+import {getSession} from 'app/shared/reducers/authentication';
+import {getProfile} from 'app/shared/reducers/application-profile';
+import {setLocale} from 'app/shared/reducers/locale';
+import {hasAnyAuthority} from 'app/shared/auth/private-route';
+import {AUTHORITIES} from 'app/config/constants';
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  UploadOutlined,
+  UserOutlined,
+  VideoCameraOutlined
+} from '@ant-design/icons';
+import {Layout, Menu} from 'antd';
 
-const baseHref = document.querySelector('base').getAttribute('href').replace(/\/$/, '');
+
+const {Header, Content, Footer, Sider} = Layout;
+
 
 export const App = () => {
   const dispatch = useAppDispatch();
+  const [collapsed, setCollapsed] = useState(false);
 
+  //login page?
   useEffect(() => {
     dispatch(getSession());
     dispatch(getProfile());
@@ -35,31 +41,50 @@ export const App = () => {
   const isInProduction = useAppSelector(state => state.applicationProfile.inProduction);
   const isOpenAPIEnabled = useAppSelector(state => state.applicationProfile.isOpenAPIEnabled);
 
-  const paddingTop = '60px';
   return (
-    <BrowserRouter basename={baseHref}>
-      <div className="app-container" style={{ paddingTop }}>
-        <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
-        <ErrorBoundary>
-          <Header
-            isAuthenticated={isAuthenticated}
-            isAdmin={isAdmin}
-            currentLocale={currentLocale}
-            ribbonEnv={ribbonEnv}
-            isInProduction={isInProduction}
-            isOpenAPIEnabled={isOpenAPIEnabled}
-          />
-        </ErrorBoundary>
-        <div className="container-fluid view-container" id="app-view-container">
-          <Card className="jh-card">
-            <ErrorBoundary>
-              <AppRoutes />
-            </ErrorBoundary>
-          </Card>
-          <Footer />
-        </div>
-      </div>
-    </BrowserRouter>
+    <Layout id='components-layout'>
+      <Sider
+        trigger={null}
+        breakpoint="lg"
+        collapsible
+        collapsed={collapsed}
+        onBreakpoint={broken => {
+          console.log(broken);
+          setCollapsed(broken);
+        }}
+        onCollapse={(collapsed, type) => {
+          console.log(collapsed, type);
+        }}
+      >
+        <div className="logo"/>
+        <Menu
+          theme="dark"
+          mode="inline"
+          defaultSelectedKeys={['4']}
+          items={[UserOutlined, VideoCameraOutlined, UploadOutlined, UserOutlined].map(
+            (icon, index) => ({
+              key: String(index + 1),
+              icon: React.createElement(icon),
+              label: `nav ${index + 1}`,
+            }),
+          )}
+        />
+      </Sider>
+      <Layout className='site-layout'>
+        <Header className="site-layout-background" style={{padding: 0}}>
+          {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+            className: 'trigger',
+            onClick: () => setCollapsed(!collapsed),
+          })}
+        </Header>
+        <Content style={{margin: '24px 16px 0'}}>
+          <div className="site-layout-background" style={{padding: 24, minHeight: 360}}>
+            <Outlet/>
+          </div>
+        </Content>
+        <Footer style={{textAlign: 'center'}}>Ant Design ©2018 Created by Ant UED</Footer>
+      </Layout>
+    </Layout>
   );
 };
 
