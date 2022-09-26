@@ -21,9 +21,9 @@ export const PrivateRoute = ({ children, hasAnyAuthorities = [], ...rest }: IOwn
     throw new Error(`A component needs to be specified for private route for path ${(rest as any).path}`);
   }
 
-  if (!sessionHasBeenFetched) {
-    return <div></div>;
-  }
+  // if (!sessionHasBeenFetched) {
+  //   return <div></div>;
+  // }
 
   if (isAuthenticated) {
     if (isAuthorized) {
@@ -53,7 +53,7 @@ export const PrivateRoute = ({ children, hasAnyAuthorities = [], ...rest }: IOwn
 
 export const hasAnyAuthority = (authorities: string[], hasAnyAuthorities: string[]) => {
   if (authorities && authorities.length !== 0) {
-    if (hasAnyAuthorities.length === 0) {
+    if (!hasAnyAuthorities || hasAnyAuthorities.length === 0) {
       return true;
     }
     return hasAnyAuthorities.some(auth => authorities.includes(auth));

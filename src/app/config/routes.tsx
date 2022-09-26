@@ -25,7 +25,12 @@ const routes = [
       {
         index: true,
         element: <Home />,
-        hasAnyAuthorities: [AUTHORITIES.ADMIN]
+        hasAnyAuthorities: [AUTHORITIES.USER]
+      },
+      {
+        path: 'home',
+        element: <Home />,
+        hasAnyAuthorities: [AUTHORITIES.USER]
       },
       {
         path: 'admin/*',
