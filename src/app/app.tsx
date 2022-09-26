@@ -14,6 +14,7 @@ import {AUTHORITIES} from 'app/config/constants';
 import * as Icon from '@ant-design/icons';
 import {Layout, Menu} from 'antd';
 import { getMenus } from 'app/shared/layout/menus';
+import { Translate } from 'react-jhipster';
 
 
 const {Header, Content, Footer, Sider} = Layout;
@@ -51,6 +52,15 @@ export const App = () => {
           console.log(collapsed, type);
         }}
       >
+        {
+          isInProduction === false ? (
+            <div className='ribbon dev'>
+              <a href=''>
+                <Translate contentKey={`global.ribbon.${ribbonEnv}`}/>
+              </a>
+            </div>
+          ) : null
+        }
         <div className="logo"/>
         <Menu
           theme="dark"
