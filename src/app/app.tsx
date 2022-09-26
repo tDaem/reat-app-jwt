@@ -11,24 +11,17 @@ import {getProfile} from 'app/shared/reducers/application-profile';
 import {setLocale} from 'app/shared/reducers/locale';
 import {hasAnyAuthority} from 'app/shared/auth/private-route';
 import {AUTHORITIES} from 'app/config/constants';
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined
-} from '@ant-design/icons';
+import * as Icon from '@ant-design/icons';
 import {Layout, Menu} from 'antd';
+import { getMenus } from 'app/shared/layout/menus';
 
 
 const {Header, Content, Footer, Sider} = Layout;
-
 
 export const App = () => {
   const dispatch = useAppDispatch();
   const [collapsed, setCollapsed] = useState(false);
 
-  //login page?
   useEffect(() => {
     dispatch(getSession());
     dispatch(getProfile());
@@ -40,6 +33,8 @@ export const App = () => {
   const ribbonEnv = useAppSelector(state => state.applicationProfile.ribbonEnv);
   const isInProduction = useAppSelector(state => state.applicationProfile.inProduction);
   const isOpenAPIEnabled = useAppSelector(state => state.applicationProfile.isOpenAPIEnabled);
+  let authorities = useAppSelector(state => state.authentication.account.authorities);
+  const menus = getMenus(authorities);
 
   return (
     <Layout id='components-layout'>
@@ -61,18 +56,12 @@ export const App = () => {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['4']}
-          items={[UserOutlined, VideoCameraOutlined, UploadOutlined, UserOutlined].map(
-            (icon, index) => ({
-              key: String(index + 1),
-              icon: React.createElement(icon),
-              label: `nav ${index + 1}`,
-            }),
-          )}
+          items={menus}
         />
       </Sider>
       <Layout className='site-layout'>
         <Header className="site-layout-background" style={{padding: 0}}>
-          {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+          {React.createElement(collapsed ? Icon['MenuUnfoldOutlined'] : Icon['MenuFoldOutlined'], {
             className: 'trigger',
             onClick: () => setCollapsed(!collapsed),
           })}

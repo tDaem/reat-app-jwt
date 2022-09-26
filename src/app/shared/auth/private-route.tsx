@@ -4,6 +4,7 @@ import { Translate } from 'react-jhipster';
 
 import { useAppSelector } from 'app/config/store';
 import ErrorBoundary from 'app/shared/error/error-boundary';
+import { APP_LOGIN_URL } from 'app/config/constants';
 
 interface IOwnProps extends RouteProps {
   hasAnyAuthorities?: string[];
@@ -21,9 +22,9 @@ export const PrivateRoute = ({ children, hasAnyAuthorities = [], ...rest }: IOwn
     throw new Error(`A component needs to be specified for private route for path ${(rest as any).path}`);
   }
 
-  // if (!sessionHasBeenFetched) {
-  //   return <div></div>;
-  // }
+  if (!sessionHasBeenFetched) {
+    return <div></div>;
+  }
 
   if (isAuthenticated) {
     if (isAuthorized) {
@@ -42,7 +43,7 @@ export const PrivateRoute = ({ children, hasAnyAuthorities = [], ...rest }: IOwn
   return (
     <Navigate
       to={{
-        pathname: '/login',
+        pathname: APP_LOGIN_URL,
         search: location.search,
       }}
       replace
