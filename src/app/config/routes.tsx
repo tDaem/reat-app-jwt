@@ -2,14 +2,16 @@ import Login from 'app/modules/login/login';
 import Logout from 'app/modules/login/logout';
 import App from 'app/app';
 import Home from 'app/modules/home/home';
+import Logs from 'app/modules/administration/logs/logs';
+import Health from 'app/modules/administration/health/health';
+import Metrics from 'app/modules/administration/metrics/metrics';
+import Configuration from 'app/modules/administration/configuration/configuration';
+import Docs from 'app/modules/administration/docs/docs';
 import { AUTHORITIES } from 'app/config/constants';
-import Loadable from 'react-loadable';
 import PageNotFound from 'app/shared/error/page-not-found';
-import { Route } from 'react-router-dom';
-import PrivateRoute from 'app/shared/auth/private-route';
 import React from 'react';
 
-const routes = [
+export const routes = [
   {
     path: 'login',
     element: <Login />
@@ -21,23 +23,32 @@ const routes = [
   {
     path: '',
     element: <App />,
-    children: [
+    children: [{ index: true, element: <Home />, hasAnyAuthorities: [AUTHORITIES.USER] }, {
+      path: 'home',
+      element: <Home />,
+      hasAnyAuthorities: [AUTHORITIES.USER]
+    },
       {
-        index: true,
-        element: <Home />,
-        hasAnyAuthorities: [AUTHORITIES.USER]
+        path: 'admin/health', element: <Health />,
+        hasAnyAuthorities: [AUTHORITIES.ADMIN]
+      }, {
+        path: 'admin/metrics',
+        element: <Metrics />,
+        hasAnyAuthorities: [AUTHORITIES.ADMIN]
       },
       {
-        path: 'home',
-        element: <Home />,
-        hasAnyAuthorities: [AUTHORITIES.USER]
+        path: 'admin/configuration',
+        element: <Configuration />,
+        hasAnyAuthorities: [AUTHORITIES.ADMIN]
       },
       {
-        path: 'admin/*',
-        element: Loadable({
-          loader: () => import(/* webpackChunkName: "administration" */ 'app/modules/administration'),
-          loading: () => <div>loading ...</div>
-        }),
+        path: 'admin/logs',
+        element: <Logs />,
+        hasAnyAuthorities: [AUTHORITIES.ADMIN]
+      },
+      {
+        path: 'admin/docs',
+        element: <Docs />,
         hasAnyAuthorities: [AUTHORITIES.ADMIN]
       }
     ]
@@ -47,26 +58,3 @@ const routes = [
     element: <PageNotFound />
   }
 ];
-
-const routeTables = (routes) => {
-  return routes.map((item, i) => {
-    return (
-      <Route
-        key={i}
-        index={item.index}
-        path={item.path}
-        element={
-          item.hasAnyAuthorities ?
-            <PrivateRoute hasAnyAuthorities={item.hasAnyAuthorities}>
-              {item.element}
-            </PrivateRoute> : item.element
-        }>
-        {item.children && routeTables(item.children)}
-      </Route>
-    );
-  });
-};
-
-
-export default routeTables(routes);
-

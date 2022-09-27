@@ -3,26 +3,12 @@ import * as Icon from '@ant-design/icons';
 import { Translate, translate } from 'react-jhipster';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
-import { AUTHORITIES } from 'app/config/constants';
-
+import menuItems from './menu-config'
 export * from './account';
 export * from './admin';
 export * from './locale';
 export * from './entities';
 
-const menuItems = [{ key: '/', icon: 'UserOutlined', label: '首页', i18: 'global.menu.home' }, {
-  key: '/admin',
-  icon: 'VideoCameraOutlined',
-  label: '管理',
-  i18: 'global.menu.admin.main',
-  authority: [AUTHORITIES.ADMIN],
-  children: [{
-    key: '/metrics',
-    icon: 'VideoCameraOutlined',
-    label: '资源监控',
-    i18: 'global.menu.admin.metrics'
-  }, { key: '/health', icon: 'VideoCameraOutlined', label: '服务状态', i18: 'global.menu.admin.health' }]
-}];
 const menus = (menuItems, parentPath: string, authority?: string[]): ItemType[] => {
   const items: ItemType[] = [];
   menuItems.forEach(item => {

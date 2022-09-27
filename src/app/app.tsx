@@ -3,7 +3,7 @@ import './app.scss';
 import 'app/config/dayjs.ts';
 
 import React, {useEffect, useState} from 'react';
-import {Outlet} from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 import {useAppDispatch, useAppSelector} from 'app/config/store';
 import {getSession} from 'app/shared/reducers/authentication';
@@ -21,6 +21,8 @@ const {Header, Content, Footer, Sider} = Layout;
 
 export const App = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
@@ -67,6 +69,7 @@ export const App = () => {
           mode="inline"
           defaultSelectedKeys={['4']}
           items={menus}
+          onClick={menuInfo => navigate(menuInfo.key)}
         />
       </Sider>
       <Layout className='site-layout'>
@@ -76,12 +79,12 @@ export const App = () => {
             onClick: () => setCollapsed(!collapsed),
           })}
         </Header>
-        <Content style={{margin: '24px 16px 0'}}>
+        <Content style={{margin: '24px 16px 0', overflow: 'auto'}}>
           <div className="site-layout-background" style={{padding: 24, minHeight: 360}}>
             <Outlet/>
           </div>
         </Content>
-        <Footer style={{textAlign: 'center'}}>Ant Design ©2018 Created by Ant UED</Footer>
+        <Footer style={{textAlign: 'center'}}>Daemon ©2022 Created by Old Fox</Footer>
       </Layout>
     </Layout>
   );
