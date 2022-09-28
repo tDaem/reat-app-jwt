@@ -8,13 +8,13 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from 'app/config/store';
 import {getSession} from 'app/shared/reducers/authentication';
 import {getProfile} from 'app/shared/reducers/application-profile';
-import {setLocale} from 'app/shared/reducers/locale';
 import {hasAnyAuthority} from 'app/shared/auth/private-route';
 import {AUTHORITIES} from 'app/config/constants';
 import * as Icon from '@ant-design/icons';
 import {Layout, Menu} from 'antd';
 import { getMenus } from 'app/shared/layout/menus';
 import { Translate } from 'react-jhipster';
+import HeaderRight from 'app/shared/layout/header/RightContent';
 
 
 const {Header, Content, Footer, Sider} = Layout;
@@ -78,6 +78,7 @@ export const App = () => {
             className: 'trigger',
             onClick: () => setCollapsed(!collapsed),
           })}
+          <HeaderRight/>
         </Header>
         <Content style={{margin: '24px 16px 0', overflow: 'auto'}}>
           <div className="site-layout-background" style={{padding: 24, minHeight: 360}}>

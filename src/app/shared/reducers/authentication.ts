@@ -124,6 +124,9 @@ export const AuthenticationSlice = createSlice({
         showModalLogin: true,
         loginError: true,
       }))
+      .addCase(authenticate.pending, state => {
+        state.loading = true;
+      })
       .addCase(authenticate.fulfilled, state => ({
         ...state,
         loading: false,
@@ -149,9 +152,7 @@ export const AuthenticationSlice = createSlice({
           account: action.payload.data,
         };
       })
-      .addCase(authenticate.pending, state => {
-        state.loading = true;
-      })
+
       .addCase(getAccount.pending, state => {
         state.loading = true;
       });
