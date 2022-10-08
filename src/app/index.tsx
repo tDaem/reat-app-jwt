@@ -13,6 +13,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import AppRoutes from 'app/routes';
 import { BrowserRouter } from 'react-router-dom';
 import './index.scss';
+import { createTheme, ThemeProvider } from '@mui/material';
 
 const store = getStore();
 registerLocale(store);
@@ -27,21 +28,23 @@ const root = createRoot(rootEl);
 const baseHref = document.querySelector('base')
   .getAttribute('href')
   .replace(/\/$/, '');
-
+const theme = createTheme();
 
 const render = Component =>
   root.render(
     <ErrorBoundary>
       <Provider store={store}>
-        <div>
-          <BrowserRouter basename={baseHref}>
-            <ToastContainer position={toast.POSITION.TOP_CENTER} className='toastify-container'
-                            toastClassName='toastify-toast' />
-            <ErrorBoundary>
-              <Component />
-            </ErrorBoundary>
-          </BrowserRouter>
-        </div>
+        <ThemeProvider theme={theme}>
+          <div>
+            <BrowserRouter basename={baseHref}>
+              <ToastContainer position={toast.POSITION.TOP_CENTER} className='toastify-container'
+                              toastClassName='toastify-toast' />
+              <ErrorBoundary>
+                <Component />
+              </ErrorBoundary>
+            </BrowserRouter>
+          </div>
+        </ThemeProvider>
       </Provider>
     </ErrorBoundary>
   );
