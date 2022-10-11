@@ -25,8 +25,12 @@ const AppRoutes = () => {
       <ErrorBoundaryRoutes>
         <Route path="login" element={<Login />} />
         <Route path="logout" element={<Logout />} />
-        <Route element={<App/>}>
-          <Route index element={<Home />} />
+        <Route element={<App />} >
+          <Route index element={
+            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]} >
+              <Home />
+            </PrivateRoute>
+          } />
           <Route
             path="admin/*"
             element={

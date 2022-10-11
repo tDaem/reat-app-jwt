@@ -28,7 +28,11 @@ const root = createRoot(rootEl);
 const baseHref = document.querySelector('base')
   .getAttribute('href')
   .replace(/\/$/, '');
-const theme = createTheme();
+const theme = createTheme({
+  palette:{
+    mode:'dark'
+  }
+});
 
 const render = Component =>
   root.render(

@@ -2,28 +2,33 @@ import 'react-toastify/dist/ReactToastify.css';
 import './app.scss';
 import 'app/config/dayjs.ts';
 
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 
-import {useAppDispatch, useAppSelector} from 'app/config/store';
-import {getSession} from 'app/shared/reducers/authentication';
-import {getProfile} from 'app/shared/reducers/application-profile';
-import {hasAnyAuthority} from 'app/shared/auth/private-route';
-import {AUTHORITIES} from 'app/config/constants';
-import * as Icon from '@ant-design/icons';
-import {Layout, Menu} from 'antd';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { getSession } from 'app/shared/reducers/authentication';
+import { getProfile } from 'app/shared/reducers/application-profile';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { AUTHORITIES } from 'app/config/constants';
 import { getMenus } from 'app/shared/layout/menus';
-import { Translate } from 'react-jhipster';
-import HeaderRight from 'app/shared/layout/header/RightContent';
+import { useTheme} from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import {
+  useMediaQuery
+} from '@mui/material';
+import Header from 'app/shared/layout/header';
+import { openDrawer } from 'app/shared/reducers/menu';
+import Drawer from 'app/shared/layout/drawer';
 
-
-const {Header, Content, Footer, Sider} = Layout;
 
 export const App = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
 
-  const [collapsed, setCollapsed] = useState(false);
+
 
   useEffect(() => {
     dispatch(getSession());
@@ -36,58 +41,43 @@ export const App = () => {
   const ribbonEnv = useAppSelector(state => state.applicationProfile.ribbonEnv);
   const isInProduction = useAppSelector(state => state.applicationProfile.inProduction);
   const isOpenAPIEnabled = useAppSelector(state => state.applicationProfile.isOpenAPIEnabled);
-  let authorities = useAppSelector(state => state.authentication.account.authorities);
+  const authorities = useAppSelector(state => state.authentication.account.authorities);
+  const { drawerOpen } = useAppSelector((state) => state.menu);
+
   const menus = getMenus(authorities);
 
+  // drawer togger
+  const [open, setOpen] = useState(drawerOpen);
+  const handleDrawerToggle = () => {
+    setOpen(!open);
+    dispatch(openDrawer({ drawerOpen: !open }));
+  };
+
+  // set media wise responsive drawer
+  useEffect(() => {
+    setOpen(!matchDownLG);
+    dispatch(openDrawer({ drawerOpen: !matchDownLG }));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matchDownLG]);
+
+  useEffect(() => {
+    if (open !== drawerOpen) setOpen(drawerOpen);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [drawerOpen]);
+
   return (
-    <Layout id='components-layout'>
-      <Sider
-        trigger={null}
-        breakpoint="lg"
-        collapsible
-        collapsed={collapsed}
-        onBreakpoint={broken => {
-          console.log(broken);
-          setCollapsed(broken);
-        }}
-        onCollapse={(collapsed, type) => {
-          console.log(collapsed, type);
-        }}
-      >
-        {
-          isInProduction === false ? (
-            <div className='ribbon dev'>
-              <a href=''>
-                <Translate contentKey={`global.ribbon.${ribbonEnv}`}/>
-              </a>
-            </div>
-          ) : null
-        }
-        <div className="logo"/>
-        <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={['4']}
-          items={menus}
-          onClick={menuInfo => navigate(menuInfo.key)}
-        />
-      </Sider>
-      <Layout className='site-layout'>
-        <Header className="site-layout-background" style={{padding: 0}}>
-          {React.createElement(collapsed ? Icon['MenuUnfoldOutlined'] : Icon['MenuFoldOutlined'], {
-            className: 'trigger',
-            onClick: () => setCollapsed(!collapsed),
-          })}
-          <HeaderRight/>
-        </Header>
-        <Content style={{margin: '24px 16px 0', overflow: 'auto'}}>
-          <div className="site-layout-background" style={{padding: 24, minHeight: 360}}>
-            <Outlet/>
-          </div>
-        </Content>
-        <Footer style={{textAlign: 'center'}}>Daemon ©2022 Created by Old Fox</Footer>
-      </Layout>
-    </Layout>
+    <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex', width: '100%' }}>
+        <Header open={open} handleDrawerToggle={handleDrawerToggle} />
+        <Drawer open={open} handleDrawerToggle={handleDrawerToggle} />
+        <Box component="main" sx={{ width: '100%', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
+          <Toolbar />
+          {/*<Breadcrumbs navigation={navigation} title titleBottom card={false} divider={false} />*/}
+          <Outlet />
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
